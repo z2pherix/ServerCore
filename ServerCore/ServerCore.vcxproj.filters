@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="ServerSocket.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Accepter.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="IThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPool.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPModel.h">
+      <Filter>Network\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkModel.h">
+      <Filter>Network\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="CircularBuffer.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectModel.h">
+      <Filter>Network\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkBuffer.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerApp.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerEngine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="EpollModel.h">
+      <Filter>Network\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandQueue.h">
+      <Filter>Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>Command</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ServerSocket.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Accepter.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="IThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPModel.cpp">
+      <Filter>Network\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkModel.cpp">
+      <Filter>Network\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="WorkThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectModel.cpp">
+      <Filter>Network\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerEngine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="EpollModel.cpp">
+      <Filter>Network\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandQueue.cpp">
+      <Filter>Command</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabaseThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Network">
+      <UniqueIdentifier>{5f143fe7-a317-4e37-be63-efacd94afb3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket">
+      <UniqueIdentifier>{000df72e-4623-482e-98e1-b0a2817695a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{be08dde8-2c4d-4a03-bf69-483945fece92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{493e19cf-06d4-42d9-90d2-2380d311ac60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Model">
+      <UniqueIdentifier>{852edd0b-e5d3-4c6c-81ac-a4a40c418969}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Session">
+      <UniqueIdentifier>{8192fee9-767a-4746-a453-a4c93c792ad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{c82be332-a539-4c4c-836e-67a6e46afa60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{13ebb06c-037c-4324-93e6-e6179cec40e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Command">
+      <UniqueIdentifier>{e3fc1b92-0c29-4ff6-86ab-4d5a5d2794ab}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
