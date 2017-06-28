@@ -65,7 +65,10 @@
       <Filter>Command</Filter>
     </ClInclude>
     <ClInclude Include="DatabaseThread.h">
-      <Filter>Thread</Filter>
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="ODBCHandler.h">
+      <Filter>DataBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -112,7 +115,10 @@
       <Filter>Command</Filter>
     </ClCompile>
     <ClCompile Include="DatabaseThread.cpp">
-      <Filter>Thread</Filter>
+      <Filter>DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="ODBCHandler.cpp">
+      <Filter>DataBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +148,9 @@
     </Filter>
     <Filter Include="Command">
       <UniqueIdentifier>{e3fc1b92-0c29-4ff6-86ab-4d5a5d2794ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataBase">
+      <UniqueIdentifier>{8bc0c9a4-806c-466d-bd29-f57d2edf128a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

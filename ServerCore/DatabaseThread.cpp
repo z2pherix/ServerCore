@@ -1,5 +1,5 @@
 #include "DatabaseThread.h"
-
+#include "ODBCHandler.h"
 
 
 DatabaseThread::DatabaseThread()

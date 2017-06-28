@@ -118,6 +118,7 @@
     <ClInclude Include="Accepter.h" />
     <ClInclude Include="DatabaseThread.h" />
     <ClInclude Include="EpollModel.h" />
+    <ClInclude Include="ODBCHandler.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="NetworkBuffer.h" />
     <ClInclude Include="Parser.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Accepter.cpp" />
     <ClCompile Include="DatabaseThread.cpp" />
     <ClCompile Include="EpollModel.cpp" />
+    <ClCompile Include="ODBCHandler.cpp" />
     <ClCompile Include="ServerEngine.cpp" />
     <ClCompile Include="IOCPModel.cpp" />
     <ClCompile Include="IThread.cpp" />
