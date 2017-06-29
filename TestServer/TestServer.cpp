@@ -82,8 +82,20 @@ int main()
 		}
 		return 0;
 	} );
+
+	const char* connectStr = "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=127.0.0.1;USER=admin;PASSWORD=admin;Trusted_Connection=yes;Database=world";
+	ServerEngine::GetInstance().InitializeDatabase( connectStr );
 	
 	ServerEngine::GetInstance().StartAccepter();
+	ServerEngine::GetInstance().StartDatabase();
+
+	Command queryCmd;
+	queryCmd.cmdMessage_ = new char [1024];
+	memset( queryCmd.cmdMessage_, 0, 1024 );
+	strcpy( (char*)queryCmd.cmdMessage_, "call sp_get_city(\"se\");" );
+
+	ServerEngine::GetInstance().PushDatabaseCommand( queryCmd );
+
 	ServerEngine::GetInstance().StartServer();
 
     return 0;

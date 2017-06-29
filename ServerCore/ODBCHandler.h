@@ -10,6 +10,7 @@
 
 class ODBCHandler
 {
+	SQLHENV     hEnv_ = nullptr;
 	SQLHSTMT	hStmt_ = nullptr;
 	SQLHDBC		hDBC_ = nullptr;
 	char		connectString_[MAX_PATH] = {0};
@@ -22,8 +23,8 @@ public:
 	virtual ~ODBCHandler();
 
 	bool Initialize();
-	bool SetConnect( SQLHENV env, char* connectString );
-	bool Reconnect( SQLHENV env );
+	bool SetConnect( const char* connectString );
+	bool Reconnect();
 
 	int  ExecuteQuery( const char* query );
 };

@@ -36,6 +36,8 @@ public:
 	std::shared_ptr<DatabaseThread>			databaseThread_;
 
 	std::shared_ptr<CommandQueue>			workQueue_;
+	std::shared_ptr<CommandQueue>			dbQueue_;
+
 	ObjectPool<Packet>						packetPool_;
 };
 
@@ -82,6 +84,7 @@ bool ServerEngine::InitializeEngine( SERVER_MODEL serverModel )
 		serverImpl_->networkThread_ = std::make_shared<NetworkThread>();
 		serverImpl_->sessionManager_ = std::make_shared<SessionManager>();
 		serverImpl_->workQueue_ = std::make_shared<CommandQueue>();
+		serverImpl_->dbQueue_ = std::make_shared<CommandQueue>();
 		
 		if( serverModel == MODEL_IOCP )
 			serverImpl_->networkModel_ = std::make_shared<IOCPModel>();
@@ -175,11 +178,13 @@ void ServerEngine::StartAccepter()
 	serverImpl_->accepter_->StartThread();
 }
 
-bool ServerEngine::InitializeDatabase()
+bool ServerEngine::InitializeDatabase( const char* connectStr )
 {
 	try
 	{
 		serverImpl_->databaseThread_ = std::make_shared<DatabaseThread>();
+
+		serverImpl_->databaseThread_->Initialize( connectStr );
 	}
 	catch( std::bad_alloc& )
 	{
@@ -246,14 +251,24 @@ void ServerEngine::FreePacket( Packet* obj )
 	serverImpl_->packetPool_.Free( obj );
 }
 
-void ServerEngine::PushCommand( Command& cmd )
+void ServerEngine::PushNetworkCommand( Command& cmd )
 {
 	serverImpl_->workQueue_->Push( cmd );
 }
 
-bool ServerEngine::PopCommand( Command& cmd )
+bool ServerEngine::PopNetworkCommand( Command& cmd )
 {
 	return serverImpl_->workQueue_->Pop( cmd );
+}
+
+void ServerEngine::PushDatabaseCommand( Command& cmd )
+{
+	serverImpl_->dbQueue_->Push( cmd );
+}
+
+bool ServerEngine::PopDatabaseCommand( Command& cmd )
+{
+	return serverImpl_->dbQueue_->Pop( cmd );
 }
 
 void ServerEngine::AddServerCommand( COMMAND_ID protocol, CommandFunction_t command )

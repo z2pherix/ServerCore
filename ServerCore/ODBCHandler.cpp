@@ -24,6 +24,17 @@ ODBCHandler::~ODBCHandler( void )
 
 bool ODBCHandler::Initialize()
 {
+	if( SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &hEnv_ ) == SQL_ERROR)
+	{
+		fwprintf(stderr, L"Unable to allocate an environment handle\n");
+		return false;
+	}
+
+	// Register this as an application that expects 3.x behavior,
+	// you must register something if you use AllocHandle
+	if( SQLSetEnvAttr( hEnv_, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0 ) != SQL_SUCCESS )
+		return false;
+
 	return true;
 }
 
@@ -96,10 +107,13 @@ bool ODBCHandler::_CheckSQLError( SQLRETURN ret, SQLSMALLINT nHandleType, SQLHAN
 	return true;
 }
 
-bool ODBCHandler::SetConnect( SQLHENV hENV, char* connectString )
+bool ODBCHandler::SetConnect( const char* connectString )
 {
+	if( hEnv_ == nullptr )
+		return false;
+
 	// ODBC 연결을 위한 메모리 할당
-	if( SQLAllocHandle( SQL_HANDLE_DBC, hENV, &hDBC_ ) != SQL_SUCCESS )
+	if( SQLAllocHandle( SQL_HANDLE_DBC, hEnv_, &hDBC_ ) != SQL_SUCCESS )
 		return false;
 
 	// ODBC를 이용한 데이터 베이스와의 연결 속성 설정
@@ -136,9 +150,8 @@ bool ODBCHandler::SetConnect( SQLHENV hENV, char* connectString )
 	}
 }
 
-bool ODBCHandler::Reconnect( SQLHENV hENV )
+bool ODBCHandler::Reconnect()
 {
-
 	if( hDBC_ != nullptr )
 	{
 		_ReleaseHandle();
@@ -148,7 +161,7 @@ bool ODBCHandler::Reconnect( SQLHENV hENV )
 		hDBC_ = nullptr;		
 	}
 
-	bool retval = this->SetConnect( hENV, connectString_ );
+	bool retval = this->SetConnect( connectString_ );
 
 	if( !retval )
 	{
@@ -177,70 +190,40 @@ int ODBCHandler::ExecuteQuery( const char* query )
 	case SQL_SUCCESS:
 		{
 			SQLSMALLINT sNumResults = 0;
+			SQLSMALLINT columnNameLength = 0;
 			SQLLEN displayLen = 0;
 			SQLLEN ssType = 0;
-			SQLNumResultCols( hStmt_ , &sNumResults );
+			SQLNumResultCols( hStmt_, &sNumResults );
 
-			for (int col = 1; col <= sNumResults; col++)
-			{
-				SQLColAttribute( hStmt_, col, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL,	&displayLen );
-				SQLColAttribute( hStmt_, col, SQL_DESC_CONCISE_TYPE, NULL, 0, NULL,	&ssType );
-
-				// Allocate a buffer big enough to hold the text representation
-				// of the data.  Add one character for the null terminator
-
-				char* buffer = (char *)malloc((displayLen+1) * sizeof(char));
-
-				SQLBindCol( hStmt_, col, SQL_C_TCHAR, (SQLPOINTER)buffer, (displayLen + 1) * sizeof(char), &pThisBinding->indPtr));
-
-
-				// Now set the display size that we will use to display
-				// the data.   Figure out the length of the column name
-
-				TRYODBC(hStmt,
-					SQL_HANDLE_STMT,
-					SQLColAttribute(hStmt,
-						iCol,
-						SQL_DESC_NAME,
-						NULL,
-						0,
-						&cchColumnNameLength,
-						NULL));
-
-				pThisBinding->cDisplaySize = max((SQLSMALLINT)cchDisplay, cchColumnNameLength);
-				if (pThisBinding->cDisplaySize < NULL_SIZE)
-					pThisBinding->cDisplaySize = NULL_SIZE;
-
-				*pDisplay += pThisBinding->cDisplaySize + DISPLAY_FORMAT_EXTRA;
-
-			}
 			bool bNoData = false;
-
-			if (sNumResults <= 0)
-				break;
 
 			do
 			{
+				char** buffer = new char* [sNumResults];
+
+				for (int col = 1; col <= sNumResults; col++)
+				{
+					SQLColAttribute( hStmt_, col, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL,	&displayLen );
+					SQLColAttribute( hStmt_, col, SQL_DESC_CONCISE_TYPE, NULL, 0, NULL,	&ssType );
+
+					buffer[col-1] = (char *)malloc((displayLen+1) * sizeof(char));
+					memset( buffer[col-1], 0, (displayLen+1) * sizeof(char) );
+					SQLLEN indPtr = 0;
+					SQLBindCol( hStmt_, col, SQL_C_TCHAR, (SQLPOINTER)buffer[col-1], (displayLen + 1) * sizeof(char), &indPtr );
+					SQLColAttribute( hStmt_, col, SQL_DESC_NAME, NULL, 0, &columnNameLength, NULL );
+
+					printf("%s\n", buffer[col-1] );
+				}
+
+				if (sNumResults <= 0)
+					break;
+
 				RETCODE retCode = SQLFetch( hStmt_ );
 				if( retCode == SQL_NO_DATA_FOUND )
 				{
 					bNoData = true;
 				}
-				else
-				{
-					SQLLEN cRowCount;
 
-					TRYODBC(hStmt,
-						SQL_HANDLE_STMT,
-						SQLRowCount(hStmt,&cRowCount));
-
-					if (cRowCount >= 0)
-					{
-						wprintf(L"%Id %s affected\n",
-							cRowCount,
-							cRowCount == 1 ? L"row" : L"rows");
-					}
-				}
 			} while( bNoData == false );
 		}
 		break;

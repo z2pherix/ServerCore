@@ -15,13 +15,13 @@ public:
 	IThread();
 	virtual ~IThread();
 
-	void SetThreadCount( unsigned int count ) { threadCount_ = count; }
 	bool IsRunning() { return isRunning_; }
 
 	void StartThread();
 	void StopThread();
 	void JoinThread();
 
+	virtual void SetThreadCount( unsigned int count ) { threadCount_ = count; }
 	virtual void Process() = 0;
 };
 

@@ -16,7 +16,7 @@ void WorkThread::Process()
 	while( IsRunning() == true )
 	{
 		Command command;
-		if( ServerEngine::GetInstance().PopCommand( command ) == false )
+		if( ServerEngine::GetInstance().PopNetworkCommand( command ) == false )
 			continue;
 
 		if( command.cmdMessage_ == nullptr )

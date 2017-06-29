@@ -88,7 +88,7 @@ void IOCPModel::SelectSession()
 						}
 						else
 						{
-							ServerEngine::GetInstance().PushCommand( Command( COMMAND_NETWORK, static_cast<COMMAND_ID>(packet->GetProtocol()), static_cast<void*>(packet) ) );
+							ServerEngine::GetInstance().PushNetworkCommand( Command( COMMAND_NETWORK, static_cast<COMMAND_ID>(packet->GetProtocol()), static_cast<void*>(packet) ) );
 							session->RecvBufferConsume( packet->GetPacketSize() );
 						}
 					}
