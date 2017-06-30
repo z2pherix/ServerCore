@@ -70,6 +70,42 @@
     <ClInclude Include="ODBCHandler.h">
       <Filter>DataBase</Filter>
     </ClInclude>
+    <ClInclude Include="json\allocator.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\assertions.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\autolink.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\config.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\features.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\forwards.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json_tool.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\reader.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\value.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\version.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\writer.h">
+      <Filter>Json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ServerSocket.cpp">
@@ -120,6 +156,15 @@
     <ClCompile Include="ODBCHandler.cpp">
       <Filter>DataBase</Filter>
     </ClCompile>
+    <ClCompile Include="json\json_reader.cpp">
+      <Filter>Json</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_value.cpp">
+      <Filter>Json</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_writer.cpp">
+      <Filter>Json</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Network">
@@ -152,5 +197,19 @@
     <Filter Include="DataBase">
       <UniqueIdentifier>{8bc0c9a4-806c-466d-bd29-f57d2edf128a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Json">
+      <UniqueIdentifier>{9a206d67-a798-40a0-8ea4-195fddfc1d48}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="json\json_valueiterator.inl">
+      <Filter>Json</Filter>
+    </None>
+    <None Include="json\sconscript">
+      <Filter>Json</Filter>
+    </None>
+    <None Include="json\version.h.in">
+      <Filter>Json</Filter>
+    </None>
   </ItemGroup>
 </Project>
