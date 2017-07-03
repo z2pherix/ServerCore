@@ -27,12 +27,14 @@ void DatabaseThread::Process()
 	while( IsRunning() == true )
 	{
 		Command command;
-		if( ServerEngine::GetInstance().PopDatabaseCommand( command ) == false )
+		if( ServerEngine::GetInstance().PopQuery( command ) == false )
 			continue;
 
 		if( command.cmdMessage_ == nullptr )
 			continue;
 
 		odbcHandler_->ExecuteQuery( (const char*)command.cmdMessage_ );
+
+		ServerEngine::GetInstance().FreeQuery( command );
 	}
 }

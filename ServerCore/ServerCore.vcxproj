@@ -134,6 +134,7 @@
     <ClInclude Include="Packet.h" />
     <ClInclude Include="NetworkBuffer.h" />
     <ClInclude Include="Parser.h" />
+    <ClInclude Include="QueryObject.h" />
     <ClInclude Include="ServerApp.h" />
     <ClInclude Include="ServerEngine.h" />
     <ClInclude Include="CircularBuffer.h" />

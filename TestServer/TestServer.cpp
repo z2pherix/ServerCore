@@ -89,12 +89,7 @@ int main()
 	ServerEngine::GetInstance().StartAccepter();
 	ServerEngine::GetInstance().StartDatabase();
 
-	Command queryCmd;
-	queryCmd.cmdMessage_ = new char [1024];
-	memset( queryCmd.cmdMessage_, 0, 1024 );
-	strcpy( (char*)queryCmd.cmdMessage_, "call sp_get_city(\"se\");" );
-
-	ServerEngine::GetInstance().PushDatabaseCommand( queryCmd );
+	ServerEngine::GetInstance().PushQuery( "call sp_get_city(\"se\");" );
 
 	ServerEngine::GetInstance().StartServer();
 

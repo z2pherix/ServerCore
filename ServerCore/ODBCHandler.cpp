@@ -211,8 +211,6 @@ int ODBCHandler::ExecuteQuery( const char* query )
 					SQLLEN indPtr = 0;
 					SQLBindCol( hStmt_, col, SQL_C_TCHAR, (SQLPOINTER)buffer[col-1], (displayLen + 1) * sizeof(char), &indPtr );
 					SQLColAttribute( hStmt_, col, SQL_DESC_NAME, NULL, 0, &columnNameLength, NULL );
-
-					printf("%s\n", buffer[col-1] );
 				}
 
 				if (sNumResults <= 0)
@@ -223,6 +221,14 @@ int ODBCHandler::ExecuteQuery( const char* query )
 				{
 					bNoData = true;
 				}
+
+				for( int i = 0; i < sNumResults; ++i )
+				{
+					printf( "%s\t", buffer[i] );
+					delete [] buffer[i];
+				}
+
+				printf("\n");
 
 			} while( bNoData == false );
 		}
