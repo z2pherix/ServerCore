@@ -13,6 +13,7 @@
 
 #include "Packet.h"
 #include "QueryObject.h"
+#include "BufferObject.h"
 
 #include "Accepter.h"
 #include "WorkThread.h"
@@ -47,6 +48,7 @@ public:
 
 	ObjectPool<Packet>						packetPool_;
 	ObjectPool<QueryObject>					queryPool_;
+	ObjectPool<BufferObject>				bufferPool_;
 };
 
 std::unique_ptr<ServerEngine> ServerEngine::instance_;
@@ -269,6 +271,16 @@ Packet* ServerEngine::AllocatePacket()
 void ServerEngine::FreePacket( Packet* obj )
 {
 	serverImpl_->packetPool_.Free( obj );
+}
+
+char* ServerEngine::AllocateBuffer()
+{
+	return reinterpret_cast<char*>( serverImpl_->bufferPool_.Alloc() );
+}
+
+void ServerEngine::FreeBuffer( char* buffer )
+{
+	serverImpl_->bufferPool_.Free( reinterpret_cast<BufferObject*>(buffer) );
 }
 
 void ServerEngine::PushCommand( Command& cmd )

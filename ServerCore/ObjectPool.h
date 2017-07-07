@@ -2,10 +2,12 @@
 #include <list>
 #include <memory>
 #include <algorithm>
+#include <mutex>
 
 template< typename t >
 class ObjectPool
 {
+	std::mutex	mutex_;
 	int defaultPoolSize_ = 32;
 	int maxPoolSize_ = 1024;
 
@@ -61,6 +63,8 @@ public:
 
 	t* Alloc()
 	{
+		std::unique_lock<std::mutex> lock { mutex_ };
+
 		if( memoryPool_.empty() == true )
 		{
 			_Reallocation();
@@ -83,6 +87,8 @@ public:
 	{
 		if( obj == nullptr )
 			return;
+
+		std::unique_lock<std::mutex> lock { mutex_ };
 
 		obj->~t();
 		memoryPool_.push_back( obj );

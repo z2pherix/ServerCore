@@ -64,6 +64,9 @@ public:
 	Packet* AllocatePacket();
 	void FreePacket( Packet* obj );
 
+	char* AllocateBuffer();
+	void FreeBuffer( char* buffer );
+
 	void PushCommand( Command& cmd );
 	bool PopCommand( Command& cmd );
 

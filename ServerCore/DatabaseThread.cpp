@@ -1,3 +1,5 @@
+#include "json/json.h"
+
 #include "DatabaseThread.h"
 #include "ODBCHandler.h"
 #include "ServerEngine.h"
@@ -33,7 +35,12 @@ void DatabaseThread::Process()
 		if( command.cmdMessage_ == nullptr )
 			continue;
 
-		odbcHandler_->ExecuteQuery( (const char*)command.cmdMessage_ );
+		Json::Value outValue;
+		odbcHandler_->ExecuteQuery( (const char*)command.cmdMessage_, outValue );
+
+		Json::StyledWriter writer;
+		std::string outputConfig = writer.write( outValue );
+		printf("%s\n", outputConfig.c_str() );
 
 		ServerEngine::GetInstance().FreeQuery( command );
 	}

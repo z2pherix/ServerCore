@@ -26,6 +26,6 @@ public:
 	bool SetConnect( const char* connectString );
 	bool Reconnect();
 
-	int  ExecuteQuery( const char* query );
+	int ExecuteQuery( IN const char* query, OUT Json::Value& outValue );
 };
 

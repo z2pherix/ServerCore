@@ -1,6 +1,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
+#include <vector>
+
+#include "json/json.h"
+
+#include "ServerEngine.h"
 #include "ODBCHandler.h"
 
 enum CONNECT_ATTRIBUTE
@@ -24,9 +29,9 @@ ODBCHandler::~ODBCHandler( void )
 
 bool ODBCHandler::Initialize()
 {
-	if( SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &hEnv_ ) == SQL_ERROR)
+	if( SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HANDLE, &hEnv_ ) == SQL_ERROR )
 	{
-		fwprintf(stderr, L"Unable to allocate an environment handle\n");
+		fwprintf( stderr, L"Unable to allocate an environment handle\n" );
 		return false;
 	}
 
@@ -56,21 +61,21 @@ bool ODBCHandler::_CheckSQLError( SQLRETURN ret, SQLSMALLINT nHandleType, SQLHAN
 	if( ret == SQL_SUCCESS )
 		return true;
 
-	SQLCHAR       sqlState[6] = {0};
-	SQLCHAR		  sqlMsg[SQL_MAX_MESSAGE_LENGTH] = {0};
+	SQLCHAR       sqlState[6] = { 0 };
+	SQLCHAR		  sqlMsg[SQL_MAX_MESSAGE_LENGTH] = { 0 };
 	SQLINTEGER    nError = 0;
 	SQLSMALLINT   nRecordNum = 1;
 	SQLSMALLINT   nMsgLen = SQL_MAX_MESSAGE_LENGTH;
-	SQLRETURN     localRet = 0;	
+	SQLRETURN     localRet = 0;
 
 	if( ( ret == SQL_ERROR ) || ( ret == SQL_SUCCESS_WITH_INFO ) )
 	{
-		while( ( localRet = SQLGetDiagRec( nHandleType, hHandle, nRecordNum, sqlState, &nError, sqlMsg,	SQL_MAX_MESSAGE_LENGTH,	&nMsgLen ) ) != SQL_NO_DATA )
+		while( ( localRet = SQLGetDiagRec( nHandleType, hHandle, nRecordNum, sqlState, &nError, sqlMsg, SQL_MAX_MESSAGE_LENGTH, &nMsgLen ) ) != SQL_NO_DATA )
 		{
 			if( localRet == SQL_INVALID_HANDLE )
 			{
 				//[ SQL : INVALID_HANDLE ] CheckSQLError()에서 사용된 Handle이 유효하지 않음"
-				if( pErrMsg )	
+				if( pErrMsg )
 					strcpy( pErrMsg, "CheckSQLError() Invalid HANDLE Error [1]" );
 
 				return false;
@@ -88,7 +93,7 @@ bool ODBCHandler::_CheckSQLError( SQLRETURN ret, SQLSMALLINT nHandleType, SQLHAN
 			++nRecordNum;
 		}
 
-		if( ret == SQL_SUCCESS_WITH_INFO )	
+		if( ret == SQL_SUCCESS_WITH_INFO )
 			return true;
 		else
 			return false;
@@ -101,7 +106,7 @@ bool ODBCHandler::_CheckSQLError( SQLRETURN ret, SQLSMALLINT nHandleType, SQLHAN
 			sprintf( pErrMsg, "CheckSQLError() Invalid HANDLE Error [2]" );
 		}
 
-		return false;		
+		return false;
 	}
 
 	return true;
@@ -122,7 +127,7 @@ bool ODBCHandler::SetConnect( const char* connectString )
 	// 패킷 크기가 8KB일 때 최대의 성능을 낸다.
 	SQLSetConnectAttr( hDBC_, SQL_ATTR_PACKET_SIZE, (SQLPOINTER)PACKETSIZE_OPT, 0 );
 
-	SQLCHAR szOutConnect[MAX_PATH] = {0};
+	SQLCHAR szOutConnect[MAX_PATH] = { 0 };
 	SQLSMALLINT cbOutConnect = 0;
 
 	// ODBC를 이용한 데이터 베이스와의 연결
@@ -140,7 +145,7 @@ bool ODBCHandler::SetConnect( const char* connectString )
 		{
 			return false;
 		}
-		
+
 		strcpy( connectString_, connectString );
 		return true;
 	}
@@ -158,7 +163,7 @@ bool ODBCHandler::Reconnect()
 
 		SQLDisconnect( hDBC_ );
 		SQLFreeHandle( SQL_HANDLE_DBC, hDBC_ );
-		hDBC_ = nullptr;		
+		hDBC_ = nullptr;
 	}
 
 	bool retval = this->SetConnect( connectString_ );
@@ -171,49 +176,51 @@ bool ODBCHandler::Reconnect()
 	return true;
 }
 
-int ODBCHandler::ExecuteQuery( const char* query )
+int ODBCHandler::ExecuteQuery( IN const char* query, OUT Json::Value& outValue )
 {
 	if( hStmt_ == nullptr )
 		return 0;
 
-	char errorMsg[SQL_MAX_MESSAGE_LENGTH+128] = {0};
-	char stateMsg[SQL_MAX_MESSAGE_LENGTH] = {0};
+	char errorMsg[SQL_MAX_MESSAGE_LENGTH + 128] = { 0 };
+	char stateMsg[SQL_MAX_MESSAGE_LENGTH] = { 0 };
 
 	SQLRETURN retValue = SQLExecDirect( hStmt_, (SQLCHAR*)query, SQL_NTS );
 	switch( retValue )
 	{
-	case SQL_SUCCESS_WITH_INFO:
+		case SQL_SUCCESS_WITH_INFO:
 		{
 			_CheckSQLError( retValue, SQL_HANDLE_STMT, hStmt_, errorMsg, stateMsg );
 			// fall through
 		}
-	case SQL_SUCCESS:
+		case SQL_SUCCESS:
 		{
 			SQLSMALLINT sNumResults = 0;
-			SQLSMALLINT columnNameLength = 0;
-			SQLLEN displayLen = 0;
-			SQLLEN ssType = 0;
 			SQLNumResultCols( hStmt_, &sNumResults );
+
+			std::vector<char*> buffer;
+			std::vector<char*> title;
+
+			for( int col = 0; col < sNumResults; col++ )
+			{
+				buffer.push_back( ServerEngine::GetInstance().AllocateBuffer() );
+				title.push_back( ServerEngine::GetInstance().AllocateBuffer() );
+
+				SQLColAttribute( hStmt_, (col + 1), SQL_DESC_NAME, title[col], sizeof( title[col] ), NULL, NULL  );
+				Json::Value param;
+				outValue[title[col]] = param;
+			}
 
 			bool bNoData = false;
 
 			do
 			{
-				char** buffer = new char* [sNumResults];
-
-				for (int col = 1; col <= sNumResults; col++)
+				for( int col = 0; col < sNumResults; col++ )
 				{
-					SQLColAttribute( hStmt_, col, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL,	&displayLen );
-					SQLColAttribute( hStmt_, col, SQL_DESC_CONCISE_TYPE, NULL, 0, NULL,	&ssType );
-
-					buffer[col-1] = (char *)malloc((displayLen+1) * sizeof(char));
-					memset( buffer[col-1], 0, (displayLen+1) * sizeof(char) );
 					SQLLEN indPtr = 0;
-					SQLBindCol( hStmt_, col, SQL_C_TCHAR, (SQLPOINTER)buffer[col-1], (displayLen + 1) * sizeof(char), &indPtr );
-					SQLColAttribute( hStmt_, col, SQL_DESC_NAME, NULL, 0, &columnNameLength, NULL );
+					SQLBindCol( hStmt_, (col + 1), SQL_C_TCHAR, (SQLPOINTER)buffer[col], sizeof( buffer[col] ), &indPtr );
 				}
 
-				if (sNumResults <= 0)
+				if( sNumResults <= 0 )
 					break;
 
 				RETCODE retCode = SQLFetch( hStmt_ );
@@ -224,27 +231,33 @@ int ODBCHandler::ExecuteQuery( const char* query )
 
 				for( int i = 0; i < sNumResults; ++i )
 				{
-					printf( "%s\t", buffer[i] );
-					delete [] buffer[i];
+					if( bNoData == false )
+					{
+						outValue[title[i]].append( buffer[i] );
+					}
 				}
-
-				printf("\n");
-
+			
 			} while( bNoData == false );
+
+			for( int i = 0; i < sNumResults; ++i )
+			{
+				ServerEngine::GetInstance().FreeBuffer( title[i] );
+				ServerEngine::GetInstance().FreeBuffer( buffer[i] );
+			}
 		}
 		break;
 
-	case SQL_ERROR:
+		case SQL_ERROR:
 		{
 			_CheckSQLError( retValue, SQL_HANDLE_STMT, hStmt_, errorMsg, stateMsg );
 		}
 		break;
 
-	default:
-		fwprintf( stderr, L"Unexpected return code %hd!\n", retValue );
+		default:
+			fwprintf( stderr, L"Unexpected return code %hd!\n", retValue );
 
 	}
-	
+
 	return retValue;
 }
 

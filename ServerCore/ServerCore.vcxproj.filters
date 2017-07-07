@@ -109,6 +109,9 @@
     <ClInclude Include="QueryObject.h">
       <Filter>DataBase</Filter>
     </ClInclude>
+    <ClInclude Include="BufferObject.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ServerSocket.cpp">

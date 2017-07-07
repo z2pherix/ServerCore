@@ -89,7 +89,10 @@ int main()
 	ServerEngine::GetInstance().StartAccepter();
 	ServerEngine::GetInstance().StartDatabase();
 
-	ServerEngine::GetInstance().PushQuery( "call sp_get_city(\"se\");" );
+	ServerEngine::GetInstance().PushQuery( "select * from city where Name like '%SE%';" );
+	ServerEngine::GetInstance().PushQuery( "select * from city where Name like '%SEO%';" );
+	ServerEngine::GetInstance().PushQuery( "select * from city where Name like '%S%';" );
+	ServerEngine::GetInstance().PushQuery( "select * from city where Name like '%K%';" );
 
 	ServerEngine::GetInstance().StartServer();
 

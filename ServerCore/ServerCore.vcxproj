@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Accepter.h" />
+    <ClInclude Include="BufferObject.h" />
     <ClInclude Include="DatabaseThread.h" />
     <ClInclude Include="EpollModel.h" />
     <ClInclude Include="json\allocator.h" />

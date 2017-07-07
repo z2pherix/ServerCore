@@ -16,7 +16,7 @@ void IThread::StartThread()
 {
 	isRunning_ = true;
 
-	for( int i = 0; i < threadCount_; ++i )
+	for( unsigned int i = 0; i < threadCount_; ++i )
 	{
 		thread_.push_back( new std::thread( [&] () { Process(); } ) );
 	}
