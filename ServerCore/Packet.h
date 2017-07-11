@@ -20,8 +20,8 @@ private:
 	PacketHeader*		packetHeader_ = reinterpret_cast<PacketHeader*>(packetBuffer_);
 
 public:
-	Packet() {}
-	virtual ~Packet() {	memset( packetBuffer_, 0, MESSAGE_BUFFER_SIZE_MAX ); }
+	Packet() { memset( packetBuffer_, 0, MESSAGE_BUFFER_SIZE_MAX ); packetHeader_ = reinterpret_cast<PacketHeader*>(packetBuffer_); }
+	virtual ~Packet() {}
 
 	void			SetProtocol( PROTOCOL_TYPE protocol ) { (*packetHeader_).packetProtcol_ = protocol; }
 	PROTOCOL_TYPE	GetProtocol() { return (*packetHeader_).packetProtcol_; }

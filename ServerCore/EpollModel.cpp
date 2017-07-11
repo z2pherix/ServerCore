@@ -93,22 +93,26 @@ void EpollModel::SelectSession()
 				continue;
 			}
 
-			Packet* packet = ServerEngine::GetInstance().AllocatePacket();
-
-			if( packet == nullptr )
-				continue;
-
-			if( ServerEngine::GetInstance().DecodePacket( itr->RecvBufferPos(), recvSize, packet ) == false )
+			do
 			{
-				ServerEngine::GetInstance().FreePacket( packet );
-			}
-			else
-			{
-				ServerEngine::GetInstance().PushCommand( Command( COMMAND_NETWORK, static_cast<COMMAND_ID>(packet->GetProtocol()), static_cast<void*>(packet) ) );
-				itr->RecvBufferConsume( packet->GetPacketSize() );
-}
+				Packet* packet = ServerEngine::GetInstance().AllocatePacket();
 
-			itr->RecvBufferConsume( recvSize );
+				if( packet == nullptr )
+					continue;
+
+				if( ServerEngine::GetInstance().DecodePacket( itr->RecvBufferPos(), recvSize, packet ) == false )
+				{
+					ServerEngine::GetInstance().FreePacket( packet );
+				}
+				else
+				{
+					ServerEngine::GetInstance().PushCommand( Command( COMMAND_NETWORK, static_cast<COMMAND_ID>(packet->GetProtocol()), static_cast<void*>(packet) ) );
+					itr->RecvBufferConsume( packet->GetPacketSize() );
+					recvSize -= packet->GetPacketSize();
+				}
+
+			}while( true );
+			
 		} 
 
 		if( event & EPOLLERR || event & EPOLLHUP || session->IsClose() )

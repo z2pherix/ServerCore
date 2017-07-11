@@ -5,4 +5,6 @@
 struct QueryObject
 {
 	char queryMsg_[MAX_QUERY_LEN] = {0};
+
+	QueryObject() { memset( queryMsg_, 0, sizeof(char) * MAX_QUERY_LEN ); }
 };

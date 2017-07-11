@@ -9,7 +9,7 @@ class ObjectPool
 {
 	std::mutex	mutex_;
 	int defaultPoolSize_ = 32;
-	int maxPoolSize_ = 1024;
+	int maxPoolSize_ = 256;
 
 	std::list<t*>	memoryPool_;
 

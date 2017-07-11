@@ -76,21 +76,26 @@ void IOCPModel::SelectSession()
 				{
 				case ASYNCFLAG_RECEIVE:
 					{
-						Packet* packet = ServerEngine::GetInstance().AllocatePacket();
+						do
+						{
+							Packet* packet = ServerEngine::GetInstance().AllocatePacket();
 
-						if( packet == nullptr )
-							return;
+							if( packet == nullptr )
+								return;
 						
-						int packetSize = 0;
-						if( ServerEngine::GetInstance().DecodePacket( session->RecvBufferPos(), static_cast<int>(dwBytesTransfer), packet->GetPacketBuffer(), packetSize ) == false )
-						{
-							ServerEngine::GetInstance().FreePacket( packet );
-						}
-						else
-						{
-							ServerEngine::GetInstance().PushCommand( Command( COMMAND_NETWORK, static_cast<COMMAND_ID>(packet->GetProtocol()), static_cast<void*>(packet) ) );
-							session->RecvBufferConsume( packet->GetPacketSize() );
-						}
+							int packetSize = 0;
+							if( ServerEngine::GetInstance().DecodePacket( session->RecvBufferPos(), static_cast<int>(dwBytesTransfer), packet->GetPacketBuffer(), packetSize ) == false )
+							{
+								ServerEngine::GetInstance().FreePacket( packet );
+								break;
+							}
+							else
+							{
+								ServerEngine::GetInstance().PushCommand( Command( COMMAND_NETWORK, static_cast<COMMAND_ID>(packet->GetProtocol()), static_cast<void*>(packet) ) );
+								session->RecvBufferConsume( packet->GetPacketSize() );
+								dwBytesTransfer -= packet->GetPacketSize();
+							}
+						} while( true );
 					}
 				break;
 				}

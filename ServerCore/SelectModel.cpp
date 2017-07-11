@@ -84,23 +84,26 @@ void SelectModel::SelectSession()
 				continue;
 			}
 
-			Packet* packet = ServerEngine::GetInstance().AllocatePacket();
-
-			if( packet == nullptr )
-				continue;
-
-			int packetSize = 0;
-			if( ServerEngine::GetInstance().DecodePacket( itr->RecvBufferPos(), recvSize, packet->GetPacketBuffer(), packetSize ) == false )
+			do
 			{
-				ServerEngine::GetInstance().FreePacket( packet );
-			}
-			else
-			{
-				ServerEngine::GetInstance().PushCommand( Command( COMMAND_NETWORK, static_cast<COMMAND_ID>(packet->GetProtocol()), static_cast<void*>(packet) ) );
-				itr->RecvBufferConsume( packet->GetPacketSize() );
-			}
+				Packet* packet = ServerEngine::GetInstance().AllocatePacket();
+
+				if( packet == nullptr )
+					continue;
+
+				int packetSize = 0;
+				if( ServerEngine::GetInstance().DecodePacket( itr->RecvBufferPos(), recvSize, packet->GetPacketBuffer(), packetSize ) == false )
+				{
+					ServerEngine::GetInstance().FreePacket( packet );
+				}
+				else
+				{
+					ServerEngine::GetInstance().PushCommand( Command( COMMAND_NETWORK, static_cast<COMMAND_ID>(packet->GetProtocol()), static_cast<void*>(packet) ) );
+					itr->RecvBufferConsume( packet->GetPacketSize() );
+					recvSize -= packet->GetPacketSize();
+				}
 			
-			itr->RecvBufferConsume( recvSize );
+			} while( true );
 		}
 	}
 }
