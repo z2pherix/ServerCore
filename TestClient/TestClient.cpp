@@ -4,9 +4,20 @@
 #include "stdafx.h"
 
 #include "Parser.h"
-#include "Session.h"
 #include "ServerEngine.h"
 #include "ServerApp.h"
+
+#ifdef USE_BOOST_ASIO
+#include "../NetworkAsio/Session.h"
+#else
+#include "../NetworkBase/Session.h"
+#endif
+
+#ifdef _WIN32
+#pragma comment(lib, "NetworkBase.lib")
+#pragma comment(lib, "ServerCore.lib")
+#pragma comment(lib, "DatabaseConnector.lib")
+#endif
 
 #define SERVER_PORT 1500
 
@@ -29,7 +40,7 @@ public:
 			return false;
 
 		const PacketHeader* header = reinterpret_cast<const PacketHeader*>(src);
-		if( header->packetSize_ + HEADER_SIZE > srcSize )
+		if( static_cast<int>(header->packetSize_ + HEADER_SIZE) > srcSize )
 			return false;
 
 		destSize = header->packetSize_ + HEADER_SIZE;
@@ -43,14 +54,13 @@ int main()
 {
 	ServerEngine::GetInstance();
 
-	ServerEngine::GetInstance().InitializeEngine( MODEL_IOCP );
+	ServerEngine::GetInstance().InitializeEngine( new ServerApp );
 	ServerEngine::GetInstance().InitializeParser( new ParserTest );
-	ServerEngine::GetInstance().InitializeApplication( new ServerApp );
 
 	ServerEngine::GetInstance().AddServerCommand( 0, [] ( Command& cmd ) -> unsigned int
 	{
 		Packet* packet = static_cast<Packet*>(cmd.cmdMessage_);
-		//printf("Recv : %s\n", packet->GetPacketData() );
+		printf("Recv : %s\n", packet->GetPacketData() );
 		return 0;
 	} );
 
@@ -67,29 +77,29 @@ int main()
 
 	ServerEngine::GetInstance().AddSession( newSession, 0 );
 
-	/*
-	while( true )
-	{
-		std::string msg;
-		std::cout << "Message : ";
-		std::cin >> msg;
+	//while( true )
+	//{
+	//	std::string msg;
+	//	std::cout << "Message : ";
+	//	std::cin >> msg;
 
-		Packet packet;
+	//	Packet packet;
 
-		packet.AddPacketData( msg.c_str(), static_cast<unsigned short>(msg.size()) );
-		newSession->SendPacket( packet );
-	}
-	*/
+	//	packet.AddPacketData( msg.c_str(), static_cast<unsigned short>(msg.size()) );
+	//	newSession->SendPacket( packet );
+	//}
+	
 
-	char brdMsg[1024] = {0};
-	sprintf( brdMsg, "abcdedfghijklmnopqrstuvwxyz1234567890" );
-	while( true )
+	//while( true )
 	{
 		Packet packet;
-		
-		packet.AddPacketData( brdMsg, strlen(brdMsg) );
+		packet.SetProtocol( (PROTOCOL_TYPE)1 );
 		newSession->SendPacket( packet );
+
+		Sleep(1);
 	}
+
+	ServerEngine::GetInstance().StopServer();
     
 	return 0;
 }

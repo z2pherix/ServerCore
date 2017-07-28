@@ -3,18 +3,10 @@
 #include <mutex>
 #include "Command.h"
 
-enum SERVER_MODEL
-{
-	MODEL_EPOLL,
-	MODEL_IOCP,
-	MODEL_SELECT,
-};
-
-
-class Socket;
 class IParser;
 class Session;
 class Packet;
+class Socket;
 
 class ServerApp;
 class ServerImplement;
@@ -39,40 +31,29 @@ public:
 	ServerApp* GetServerApp();
 
 	void StartServer();
-	
-	bool InitializeEngine( SERVER_MODEL serverModel );
+	void StopServer();
+
+	bool InitializeEngine( ServerApp* application );
 	bool InitializeParser( IParser* parser );
-	bool InitializeApplication( ServerApp* application );
 
 	bool InitializeAccepter();
 	bool AddAcceptPort( int port );
-	void StartAccepter();
-
-	bool InitializeDatabase( const char* connectStr );
-	bool AddDatabaseConnection();
-	void StartDatabase();
 
 	Session* CreateSession( Socket& socket );
-
 	void AddSession( Session* newSession, int acceptPort );
-	void CloseSession( Session* session );
-	void SelectSession();
-	
+
 	bool EncodePacket( const char* src, int srcSize, char* dest, int& destSize );
 	bool DecodePacket( const char* src, int srcSize, char* dest, int& destSize );
 
 	Packet* AllocatePacket();
 	void FreePacket( Packet* obj );
 
-	char* AllocateBuffer();
-	void FreeBuffer( char* buffer );
-
 	void PushCommand( Command& cmd );
 	bool PopCommand( Command& cmd );
 
-	void PushQuery( char* query );
-	bool PopQuery( Command& cmd );
-	void FreeQuery( Command& cmd );
+	bool InitializeDatabase( const char* connectString );
+	void PushQuery( const char* query, size_t len );
+	void StartDatabase();
 
 	void AddServerCommand( COMMAND_ID protocol, CommandFunction_t command );
 	CommandFunction_t GetServerCommand( COMMAND_ID protocol );

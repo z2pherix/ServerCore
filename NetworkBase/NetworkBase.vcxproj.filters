@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="IOCPModel.cpp">
+      <Filter>NetworkModel</Filter>
+    </ClCompile>
+    <ClCompile Include="EpollModel.cpp">
+      <Filter>NetworkModel</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectModel.cpp">
+      <Filter>NetworkModel</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkModel.cpp">
+      <Filter>NetworkModel</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerSocket.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Accepter.cpp">
+      <Filter>Accepter</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkCore.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IOCPModel.h">
+      <Filter>NetworkModel</Filter>
+    </ClInclude>
+    <ClInclude Include="EpollModel.h">
+      <Filter>NetworkModel</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectModel.h">
+      <Filter>NetworkModel</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkModel.h">
+      <Filter>NetworkModel</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerSocket.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Accepter.h">
+      <Filter>Accepter</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkBuffer.h">
+      <Filter>NetworkBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="CircularBuffer.h">
+      <Filter>NetworkBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkCore.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="NetworkModel">
+      <UniqueIdentifier>{5eeac126-57da-4fe9-b988-9a027c736085}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket">
+      <UniqueIdentifier>{3f77ec19-4c03-4cce-a0db-bbe351efe68d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Accepter">
+      <UniqueIdentifier>{aa474abb-dad5-4568-973f-4ba3adba2e2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkBuffer">
+      <UniqueIdentifier>{7e5e737f-bd25-43c3-ad6a-e59b44d5d604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{3764baee-cce3-4282-b391-0ab359b6e9ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{00ad6aba-d2f6-4952-88d8-357ba4bb3315}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

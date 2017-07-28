@@ -4,7 +4,18 @@
 #include "ServerEngine.h"
 #include "ServerApp.h"
 #include "Parser.h"
-#include "Session.h"
+
+#ifdef USE_BOOST_ASIO
+#include "../NetworkAsio/Session.h"
+#else
+#include "../NetworkBase/Session.h"
+#endif
+
+#ifdef _WIN32
+#pragma comment(lib, "NetworkBase.lib")
+#pragma comment(lib, "ServerCore.lib")
+#pragma comment(lib, "DatabaseConnector.lib")
+#endif
 
 #define SERVER_PORT 1500
 
@@ -13,15 +24,20 @@ class ServerTest : public ServerApp
 	std::list<Session*>	clientList_;
 
 public:
-	virtual void OnAccept( int port, Session* session )
+
+	ServerTest() {}
+	~ServerTest() {}
+
+	virtual void OnAccept( int port, void* session ) override
 	{
 		printf( "Accept Session [%d]\n", port );
-		clientList_.push_back( session );
+		clientList_.push_back( static_cast<Session*>(session) );
 	}
-	virtual void OnClose( Session* session )
+
+	virtual void OnClose( void* session ) override
 	{
 		printf( "Close Session\n" );
-		clientList_.remove( session );
+		clientList_.remove( static_cast<Session*>(session) );
 	}
 
 	std::list<Session*>& GetClientList() { return clientList_; }
@@ -46,7 +62,7 @@ public:
 			return false;
 
 		const PacketHeader* header = reinterpret_cast<const PacketHeader*>(src);
-		if( header->packetSize_ + HEADER_SIZE > srcSize )
+		if( static_cast<int>( header->packetSize_ + HEADER_SIZE ) > srcSize )
 			return false;
 
 		destSize = header->packetSize_ + HEADER_SIZE;
@@ -58,9 +74,8 @@ public:
 
 int main()
 {
-	ServerEngine::GetInstance().InitializeEngine( MODEL_IOCP );
+	ServerEngine::GetInstance().InitializeEngine( new ServerTest );
 	ServerEngine::GetInstance().InitializeParser( new ParserTest );
-	ServerEngine::GetInstance().InitializeApplication( new ServerTest );
 
 	ServerEngine::GetInstance().InitializeAccepter();
 	ServerEngine::GetInstance().AddAcceptPort( SERVER_PORT );
@@ -84,17 +99,17 @@ int main()
 		return 0;
 	} );
 
-	const char* connectStr = "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=127.0.0.1;USER=admin;PASSWORD=admin;Trusted_Connection=yes;Database=world";
+	ServerEngine::GetInstance().AddServerCommand( 1, [] ( Command& cmd ) -> unsigned int
+	{
+		char* query = "select * from city where Name like '%SE%';";
+		ServerEngine::GetInstance().PushQuery( query, strlen(query)  );
+		return 0;
+	} );
+
+	const char* connectStr = "DRIVER={MySQL ODBC 3.51 Driver};SERVER=127.0.0.1;USER=admin;PASSWORD=admin;Trusted_Connection=yes;Database=world";
 	ServerEngine::GetInstance().InitializeDatabase( connectStr );
 	
-	ServerEngine::GetInstance().StartAccepter();
 	ServerEngine::GetInstance().StartDatabase();
-
-	//ServerEngine::GetInstance().PushQuery( "select * from city where Name like '%SE%';" );
-	//ServerEngine::GetInstance().PushQuery( "select * from city where Name like '%SEO%';" );
-	//ServerEngine::GetInstance().PushQuery( "select * from city where Name like '%S%';" );
-	//ServerEngine::GetInstance().PushQuery( "select * from city where Name like '%K%';" );
-
 	ServerEngine::GetInstance().StartServer();
 
     return 0;

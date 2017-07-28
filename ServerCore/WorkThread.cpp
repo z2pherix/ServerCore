@@ -2,15 +2,6 @@
 #include "ServerEngine.h"
 #include "Packet.h"
 
-WorkThread::WorkThread()
-{
-}
-
-
-WorkThread::~WorkThread()
-{
-}
-
 void WorkThread::Process()
 {
 	while( IsRunning() == true )
@@ -29,10 +20,6 @@ void WorkThread::Process()
 			workFunc( command );
 		}
 
-		if( command.cmdType_ == COMMAND_NETWORK )
-		{
-			ServerEngine::GetInstance().FreePacket( static_cast<Packet*>(command.cmdMessage_) );
-		}
-
+		ServerEngine::GetInstance().FreePacket( static_cast<Packet*>(command.cmdMessage_) );
 	}
 }

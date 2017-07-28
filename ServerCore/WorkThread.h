@@ -5,8 +5,8 @@
 class WorkThread : public IThread
 {
 public:
-	WorkThread();
-	virtual ~WorkThread();
+	WorkThread() {}
+	virtual ~WorkThread() {}
 
 	virtual void Process();
 };

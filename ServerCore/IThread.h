@@ -1,14 +1,11 @@
 #pragma once
 #include <thread>
-#include <vector>
 
 class IThread
 {
 private:
 
-	std::vector<std::thread*>	thread_;
-	unsigned int				threadCount_ = 1;
-	
+	std::thread*				thread_ = nullptr;
 	volatile bool				isRunning_ = false;
 
 public:
@@ -21,7 +18,6 @@ public:
 	void StopThread();
 	void JoinThread();
 
-	virtual void SetThreadCount( unsigned int count ) { threadCount_ = count; }
 	virtual void Process() = 0;
 };
 
